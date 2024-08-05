@@ -7,6 +7,7 @@ pub struct HkMod {
     dependencies: Vec<String>,
     tags: Option<Vec<String>>,
     authors: Vec<String>,
+    integrations: Vec<String>,
 }
 impl HkMod {
 

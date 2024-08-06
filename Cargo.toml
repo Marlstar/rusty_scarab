@@ -6,6 +6,12 @@ edition = "2021"
 [dependencies]
 
 
+[dependencies.tokio]
+version = "1.39.2"
+features = ["full"]
+[dependencies.tokio-macros]
+version = "2.4.0"
+
 [dependencies.backend]
 path = "backend"
 [dependencies.frontend]

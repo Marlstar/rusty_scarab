@@ -1,6 +1,7 @@
 use crate::{HkMod, ModConstuctor};
 use std::collections::HashMap;
 
+#[allow(dead_code)]
 const MOD_LIST_XML: &str = "https://raw.githubusercontent.com/hk-modding/modlinks/main/ModLinks.xml";
 const TEST_MOD_XML_ELEMENT: &str = "<Manifest>\n\
     <Name>ModCommon</Name>\n\
@@ -19,6 +20,7 @@ const TEST_MOD_XML_ELEMENT: &str = "<Manifest>\n\
     </Tags>\n\
     <Authors>\n\
     <Author>Kerr1291</Author>\n\
+    <Author>Kerr1291_second</Author>\n\
     </Authors>\n\
     </Manifest>";
 
@@ -36,10 +38,12 @@ impl ModDatabase {
 
 impl ModDatabase {
     pub async fn get_mods(&mut self) -> Result<(), Box<dyn std::error::Error>> {
-        // let raw_xml = Self::get_modlist_xml().await?;
-        let raw_xml = TEST_MOD_XML_ELEMENT.to_string();
+        let raw_xml = Self::get_modlist_xml().await?;
+        // let raw_xml = TEST_MOD_XML_ELEMENT.to_string();
         let xml = Self::parse_modlist_xml(&raw_xml).await?;
         
+
+        let mut mod_count = 0_usize;
         for m in xml.descendants().filter(|n| n.tag_name().name() == "Manifest") {
             // Per mod
             let mut cm = ModConstuctor::new();
@@ -48,7 +52,7 @@ impl ModDatabase {
                     Some(a) => Some(a.trim().to_string()),
                     None => None
                 };
-                println!("Current text: {:?}", ct);
+
                 match c.tag_name().name() {
                     "Name" => cm.name = ct,
 
@@ -77,15 +81,60 @@ impl ModDatabase {
 
                     "Repository" => cm.repository = ct,
 
+                    "Authors" => {
+                        let mut authors: Vec<String> = vec![];
+                        for child in c.descendants().filter(|d| d.tag_name().name() == "Author") {
+                            if let Some(a) = child.text() { authors.push(a.to_string()); }
+                        }
+                        cm.authors = Some(authors);
+                    }
+
+                    "Tags" => {
+                        let mut tags: Vec<String> = vec![];
+                        for child in c.descendants().filter(|d| d.tag_name().name() == "Tag") {
+                            if let Some(a) = child.text() { tags.push(a.to_string()); }
+                        };
+                        if !tags.is_empty() {
+                            cm.tags = Some(tags);
+                        }
+                    }
+
+                    "Dependencies" => {
+                        let mut dependencies: Vec<String> = vec![];
+                        for child in c.descendants().filter(|d| d.tag_name().name() == "Dependency") {
+                            if let Some(a) = child.text() { dependencies.push(a.to_string()); }
+                        };
+                        if !dependencies.is_empty() {
+                            cm.dependencies = Some(dependencies);
+                        }
+                    }
+
+                    "Integrations" => {
+                        let mut integrations: Vec<String> = vec![];
+                        for child in c.descendants().filter(|d| d.tag_name().name() == "Integration") {
+                            if let Some(a) = child.text() { integrations.push(a.to_string()); }
+                        };
+                        if !integrations.is_empty() {
+                            cm.integrations = Some(integrations);
+                        }
+                    }
+
                     _ => ()
                 }
 
             }
-            println!("{:#?}", cm);
-            todo!()
+
+            match cm.build() {
+                Some(a) => {
+                    mod_count += 1;
+                    self.mods.insert(a.name.clone(), a);
+                }
+                None => {}
+            }
         }
 
-        todo!();
+        println!("Parsed {mod_count} mods");
+        Ok(())
     }
 
     async fn get_modlist_xml() -> Result<String, reqwest::Error> {

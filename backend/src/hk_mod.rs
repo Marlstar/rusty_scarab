@@ -6,10 +6,10 @@ pub struct HkMod {
     pub link: String,
     pub hash: String,
     pub repository: String,
+    pub authors: Vec<String>,
     pub dependencies: Vec<String>,
     pub integrations: Vec<String>,
-    pub tags: Option<Vec<String>>,
-    pub authors: Vec<String>,
+    pub tags: Vec<String>,
 }
 impl HkMod {
     pub fn get_mod_file(&self) {
@@ -26,10 +26,10 @@ pub struct ModConstuctor {
     pub link: Option<String>,
     pub hash: Option<String>,
     pub repository: Option<String>,
+    pub authors: Option<Vec<String>>,
     pub dependencies: Option<Vec<String>>,
     pub integrations: Option<Vec<String>>,
     pub tags: Option<Vec<String>>,
-    pub authors: Option<Vec<String>>,
 }
 impl ModConstuctor {
     pub fn new() -> Self {
@@ -73,18 +73,21 @@ impl ModConstuctor {
                 Some(a) => a.clone(),
                 None => return None
             },
-            dependencies: match &self.dependencies {
+            dependencies: match &self.integrations {
                 Some(a) => a.clone(),
-                None => return None
+                None => vec![]
             },
             integrations: match &self.integrations {
                 Some(a) => a.clone(),
-                None => return None
+                None => vec![]
             },
-            tags: self.tags.clone(),
+            tags: match &self.tags {
+                Some(a) => a.clone(),
+                None => vec![]
+            },
             authors: match &self.authors {
                 Some(a) => a.clone(),
-                None => return None
+                None => vec![]
             },
         };
         return Some(m);

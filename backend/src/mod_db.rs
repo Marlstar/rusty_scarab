@@ -145,3 +145,16 @@ impl ModDatabase {
         return roxmltree::Document::parse(raw_xml);
     }
 }
+
+
+impl ModDatabase {
+    pub async fn download_mod(&self, mod_name: &String) -> bool {
+        return match self.mods.get(mod_name) {
+            Some(a) => {
+                a.get_mod_file().await;
+                true
+            },
+            None => false
+        }
+    }
+}

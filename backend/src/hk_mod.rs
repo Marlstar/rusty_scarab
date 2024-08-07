@@ -12,8 +12,35 @@ pub struct HkMod {
     pub tags: Vec<String>,
 }
 impl HkMod {
-    pub fn get_mod_file(&self) {
-        return;
+    pub async fn get_mod_file(&self) {
+        // Get file
+        use downloader::{Downloader, Download};
+        let dl = Download::new(self.link.as_str());
+        let mut downloader = Downloader::builder()
+            .download_folder(std::path::Path::new(crate::directories::DOWNLOAD_DIR().as_str()))
+            .build().unwrap();
+
+        let dl_results = downloader.download(&[dl]);
+        let result = dl_results.unwrap()
+            .into_iter().nth(0)
+            .unwrap().unwrap();
+        let fname = result.file_name;
+
+        let dl_hash = sha256::try_digest(fname.as_path()).unwrap().to_lowercase();
+        if dl_hash != self.hash {
+            panic!("hash assertion failed for file {:?}", fname);
+        }
+
+        // Make sure file is a dll, if not, unzip
+        let dl_extension = fname.extension().unwrap().to_str().unwrap();
+
+        match dl_extension {
+            "dll" => {
+
+            },
+            // "zip" => extract_dll_from_zip(fname),
+            _ => panic!("unexpected mod file format!")
+        }
     }
 }
 
@@ -66,7 +93,7 @@ impl ModConstuctor {
                 None => return None
             },
             hash: match &self.hash {
-                Some(a) => a.clone(),
+                Some(a) => a.to_lowercase(),
                 None => return None
             },
             repository: match &self.repository {

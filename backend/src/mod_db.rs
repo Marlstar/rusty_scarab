@@ -3,26 +3,6 @@ use std::collections::HashMap;
 
 #[allow(dead_code)]
 const MOD_LIST_XML: &str = "https://raw.githubusercontent.com/hk-modding/modlinks/main/ModLinks.xml";
-const TEST_MOD_XML_ELEMENT: &str = "<Manifest>\n\
-    <Name>ModCommon</Name>\n\
-    <Description>A hollow knight mod that provides an API of helpers and other utilities for modding hollow knight.\n\
-        Not recommended for use in new mods.</Description>\n\
-    <Version>1.0.0.0</Version>\n\
-    <Link SHA256=\"a4959501676033bb66136b466597f266794ef3627c92c4455c94b2a6450b69aa\">
-        <![CDATA[https://github.com/HK-Modding-Preservation/ModCommon/releases/download/v1/ModCommon_1.5.dll]]>\n\
-    </Link>\n\
-    <Dependencies/>\n\
-    <Repository>\n\
-        <![CDATA[https://github.com/HK-Modding-Preservation/ModCommon]]>\n\
-    </Repository>\n\
-    <Tags>\n\
-    <Tag>Library</Tag>\n\
-    </Tags>\n\
-    <Authors>\n\
-    <Author>Kerr1291</Author>\n\
-    <Author>Kerr1291_second</Author>\n\
-    </Authors>\n\
-    </Manifest>";
 
 
 pub struct ModDatabase {

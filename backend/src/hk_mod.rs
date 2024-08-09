@@ -1,3 +1,5 @@
+use crate::ScarabDir;
+
 #[derive(Debug, Clone)]
 pub struct HkMod {
     pub name: String,
@@ -13,34 +15,14 @@ pub struct HkMod {
 }
 impl HkMod {
     pub async fn get_mod_file(&self) {
-        // Get file
-        use downloader::{Downloader, Download};
-        let dl = Download::new(self.link.as_str());
-        let mut downloader = Downloader::builder()
-            .download_folder(std::path::Path::new(crate::directories::DOWNLOAD_DIR().as_str()))
-            .build().unwrap();
+        println!("\nDownloading mod: {}", self.name);
 
-        let dl_results = downloader.download(&[dl]);
-        let result = dl_results.unwrap()
-            .into_iter().nth(0)
-            .unwrap().unwrap();
-        let fname = result.file_name;
-
-        let dl_hash = sha256::try_digest(fname.as_path()).unwrap().to_lowercase();
-        if dl_hash != self.hash {
-            panic!("hash assertion failed for file {:?}", fname);
-        }
-
-        // Make sure file is a dll, if not, unzip
-        let dl_extension = fname.extension().unwrap().to_str().unwrap();
-
-        match dl_extension {
-            "dll" => {
-
-            },
-            // "zip" => extract_dll_from_zip(fname),
-            _ => panic!("unexpected mod file format!")
-        }
+        let _ = crate::download(
+            self.link.as_str(),
+            ScarabDir::MOD.dir().as_str(),
+            self.name.as_str(),
+            &self.version
+        ).await;
     }
 }
 

@@ -5,4 +5,8 @@ mod hk_mod;
 pub use hk_mod::HkMod;
 pub(crate) use hk_mod::ModConstuctor;
 
-pub mod directories;
+mod directories;
+pub use directories::{ScarabDir, make_dirs, clean_dir};
+
+mod download;
+pub use download::download;

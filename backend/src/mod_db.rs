@@ -4,6 +4,14 @@ use std::collections::HashMap;
 #[allow(dead_code)]
 const MOD_LIST_XML: &str = "https://raw.githubusercontent.com/hk-modding/modlinks/main/ModLinks.xml";
 
+#[cfg(target_os = "windows")]
+const OS_NAME: &str = "Windows";
+#[cfg(target_os = "macos")]
+const OS_NAME: &str = "Mac";
+#[cfg(target_os = "linux")]
+const OS_NAME: &str = "Linux";
+
+
 
 pub struct ModDatabase {
     mods: HashMap<String, HkMod>
@@ -57,6 +65,24 @@ impl ModDatabase {
                                 .value()
                                 .to_string()
                         );
+                    },
+
+                    "Links" => {
+                        for d in c.descendants() {
+                            if d.tag_name().name() == OS_NAME {
+                                cm.link = match d.text() {
+                                    Some(a) => Some(a.trim().to_string()),
+                                    None => continue
+                                };
+                                cm.hash = Some(
+                                    d.attributes()
+                                        .filter(|a| a.name() == "SHA256")
+                                        .nth(0).unwrap()
+                                        .value()
+                                        .to_string()
+                                );
+                            }
+                        }
                     },
 
                     "Repository" => cm.repository = ct,

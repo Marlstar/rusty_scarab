@@ -11,6 +11,11 @@ sha256 = "*"
 inline_colorization = "*"
 zip = "*"
 futures = "*"
+ron = "*"
+
+[dependencies.serde]
+version = "1"
+features = ["derive"]
 
 [dependencies.tokio]
 version = "1.39.2"

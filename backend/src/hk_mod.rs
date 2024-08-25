@@ -14,6 +14,7 @@ pub struct HkMod {
     pub tags: Vec<String>,
 }
 impl HkMod {
+    /// Download mod file to mods directory
     pub async fn get_mod_file(&self) {
         println!("\nDownloading mod: {}", self.name);
 

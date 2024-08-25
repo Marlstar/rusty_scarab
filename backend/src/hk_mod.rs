@@ -15,15 +15,19 @@ pub struct HkMod {
 }
 impl HkMod {
     /// Download mod file to mods directory
-    pub async fn get_mod_file(&self) {
+    pub async fn dowload(&self) {
         println!("\nDownloading mod: {}", self.name);
 
         let _ = crate::download(
             self.link.as_str(),
-            ScarabDir::MOD.dir().as_str(),
+            &self.dir(),
             self.name.as_str(),
             &self.version
         ).await;
+    }
+    
+    pub fn dir(&self) -> String {
+        return format!("{}/{}", ScarabDir::MOD.dir(), self.name);
     }
 }
 

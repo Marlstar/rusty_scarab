@@ -25,6 +25,10 @@ impl ModDatabase {
 }
 
 impl ModDatabase {
+    pub async fn mod_info(&self, mod_name: &String) -> Option<&HkMod> {
+        return self.mods.get(mod_name);
+    }
+
     pub async fn get_mods(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         let raw_xml = Self::get_modlist_xml().await?;
         // let raw_xml = TEST_MOD_XML_ELEMENT.to_string();

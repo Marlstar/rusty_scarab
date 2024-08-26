@@ -37,9 +37,10 @@ pub async fn download(url: &str, write_path: &str, mod_name: &str, mod_version: 
 
     println!(" -> Moving dll to mods folder");
 
+    tokio::fs::create_dir_all(write_path).await?;
     let final_path = format!(
         "{}\\{}-{}.{}.{}.{}.dll",
-        crate::ScarabDir::MOD.dir(),
+        write_path,
         mod_name,
         mod_version[0], mod_version[1], mod_version[2], mod_version[3], 
     );

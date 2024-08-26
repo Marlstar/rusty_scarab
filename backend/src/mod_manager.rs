@@ -1,3 +1,5 @@
+use std::fmt::format;
+
 use crate::ModDatabase;
 use crate::ScarabDir;
 use crate::ModVersion;
@@ -51,7 +53,7 @@ impl ModManager {
     pub fn mod_installed(mod_name: &String) -> Option<ModVersion> {
         let mod_base_dir = ScarabDir::MOD.dir();
         let mod_dir = format!("{mod_base_dir}/{mod_name}");
-
+        
         if !std::path::Path::new(&mod_dir).exists() {
             return None;
         }
@@ -60,7 +62,6 @@ impl ModManager {
             let file = &file.unwrap().path();
             if !file.is_file() { continue };
             if file.extension() != Some(std::ffi::OsStr::new("dll")) { continue };
-
 
             let name = file.file_stem().unwrap();
             let version_vec: Vec<usize> = name.to_str().unwrap() // File name not including extension
